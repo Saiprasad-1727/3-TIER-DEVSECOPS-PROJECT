@@ -8,12 +8,15 @@ pipeline {
     environment {
         SCANNER_HOME = tool 'sonar-scanner'         #Sets an environment variable SCANNER_HOME pointing to the installed SonarQube scanner tool.
     }
+# At this stage the jenkins will pull the code from github and checkout to dev branch and After this stage, your workspace has the project source code.
     stages {
         stage('git checkout') {
             steps {
                 git branch: 'dev', url: 'https://github.com/Saiprasad-1727/3-TIER-DEVSECOPS-PROJECT.git'
             }
         }
+        # Switches into the client folder (frontend code). Runs node --check on every .js file → this checks JavaScript syntax without actually running the file.
+# Purpose: make sure frontend JavaScript code has no syntax errors.
         stage('FrontEnd Compilation') {
             steps {
                 dir('client') {
