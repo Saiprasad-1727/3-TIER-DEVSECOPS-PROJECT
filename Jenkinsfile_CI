@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+    
+    tools {
+        nodejs 'Nodejs23'
+    }
+
+    environment {
+        SCANNER_HOME = tool 'sonar-scanner'
+    }
+    stages {
+        stage('git checkout') {
+            steps {
+                git branch: 'dev', url: 'https://github.com/Saiprasad-1727/3-TIER-DEVSECOPS-PROJECT.git'
+            }
+        }
+        stage('FrontEnd Compilation') {
+            steps {
+                dir('client') {
+                    sh 'find . -name "*.js" -exec node --check {} +'
+                }
+            }
+        }
+        stage('Backend Compilation') {
+            steps {
+                dir('api') {
+                    sh 'find . -name "*.js" -exec node --check {} +'
+                }
+            }
+        }
+        stage('Gitleaks scan') {
+            steps {
+                sh 'gitleaks detect --source ./client --exit-code 1'
+                sh 'gitleaks detect --source ./api --exit-code 1'
+            }
+        }
+        stage('SonarQube-Analysis') {
+            steps {
+                withSonarQubeEnv('Sonar') {
+                    sh '''$SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=NodeJS-project \
+                            -Dsonar.projectKey=NodeJS-Project '''
+                }
+            }
+        }
+        stage('Quality-Gate-Check') {
+            steps {
+                timeout(time: 1, unit: 'HOURS') {
+                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
+                }
+            }
+        }
+        stage('Trivy fs Scan'){
+            steps {
+                sh 'trivy fs --format table -o fs-report.html .'
+            }
+        }
+    }
+}
