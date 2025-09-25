@@ -2,11 +2,11 @@ pipeline {
     agent any         #This tells Jenkins the pipeline can run on any available agent node.
     
     tools {
-        nodejs 'Nodejs23'
+        nodejs 'Nodejs23'           #Jenkins will use a pre-configured Node.js installation (labeled Nodejs23) on the agent.
     }
 
     environment {
-        SCANNER_HOME = tool 'sonar-scanner'
+        SCANNER_HOME = tool 'sonar-scanner'         #Sets an environment variable SCANNER_HOME pointing to the installed SonarQube scanner tool.
     }
     stages {
         stage('git checkout') {
