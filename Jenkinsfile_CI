@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('git checkout') {
             steps {
-                git branch: 'dev', url: 'https://github.com/Saiprasad-1727/3-TIER-DEVSECOPS-PROJECT.git'
+                git branch: 'Docker-Build-Deploy', url: 'https://github.com/Saiprasad-1727/3-TIER-DEVSECOPS-PROJECT.git'
             }
         }
         # Switches into the client folder (frontend code). Runs node --check on every .js file → this checks JavaScript syntax without actually running the file.
